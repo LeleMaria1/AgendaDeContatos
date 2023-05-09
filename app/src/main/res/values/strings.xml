@@ -19,5 +19,8 @@
     <string name="nameLabelTextView">Nome:</string>
     <string name="phoneLabelTextView">Phone:</string>
     <string name="emailLabelTextView">Email:</string>
+    <string name="nameEditText">Nome (Obrigatório)</string>
+    <string name="phoneEditText">Telefone</string>
+    <string name="emailEditText">Email</string>>
 
 </resources>
