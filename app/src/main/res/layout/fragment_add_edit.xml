@@ -30,7 +30,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/nameEditText"
-                android:imeOptions="actionNext" />
+                android:imeOptions="actionNext"
+                android:inputType="textPersonName|textCapWords" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -42,7 +43,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/phoneEditText"
-                android:imeOptions="actionNext" />
+                android:imeOptions="actionNext"
+                android:inputType="phone" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -54,7 +56,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/emailEditText"
-                android:imeOptions="actionDone" />
+                android:imeOptions="actionDone"
+                android:inputType="textEmailAddress" />
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
 
