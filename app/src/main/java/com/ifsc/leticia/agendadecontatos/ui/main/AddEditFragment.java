@@ -1,5 +1,6 @@
 package com.ifsc.leticia.agendadecontatos.ui.main;
 
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Context;
@@ -16,7 +17,9 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.textfield.TextInputLayout;
 import com.ifsc.leticia.agendadecontatos.R;
+import com.ifsc.leticia.agendadecontatos.data.Contact;
 
 import static com.ifsc.leticia.agendadecontatos.MainActivity.CONTACT_ID;
 import static com.ifsc.leticia.agendadecontatos.MainActivity.NEW_CONTACT;
@@ -31,15 +34,21 @@ public class AddEditFragment extends Fragment {
     // ViewModel do fragmento
     private AddEditViewModel addEditViewModel;
 
+    // componentes EditText para informações de contato
+    private TextInputLayout nameTextInputLayout;
+    private TextInputLayout phoneTextInputLayout;
+    private TextInputLayout emailTextInputLayout;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         // cria o fragmento com o layout do arquivo add_edit_fragment.xml
         View view = inflater.inflate(R.layout.fragment_add_edit, container, false);
-
-        // TODO componentes TextInputLayout
-
+        // obtem as referências dos componentes
+        nameTextInputLayout = view.findViewById(R.id.nameTextInputLayout);
+        phoneTextInputLayout = view.findViewById(R.id.phoneTextInputLayout);
+        emailTextInputLayout = view.findViewById(R.id.emailTextInputLayout);
         // configura o receptor de eventos do FAB
         saveContactFAB = view.findViewById(R.id.saveButton);
         saveContactFAB.setOnClickListener(saveContactButtonClicked);
@@ -70,16 +79,43 @@ public class AddEditFragment extends Fragment {
 
     // salva informações de um contato no banco de dados
     private void saveContact() {
-        // TODO ler dados inseridos
-        // TODO salvar dados
-        // solicita o retorno a tela anterior
+        // faz a leitura dos dados inseridos
+        String name = nameTextInputLayout.getEditText().getText().toString();
+        String phone = phoneTextInputLayout.getEditText().getText().toString();
+        String email = emailTextInputLayout.getEditText().getText().toString();
+        // caso for adição de uma novo contato
+        if (addingNewContact) {
+            // cria um contato sem um ID pois ele será adicionado automaticamente no banco de dados
+            Contact contact = new Contact(name, phone, email);
+            // solicita a ViewModel a inserção do novo contato
+            addEditViewModel.insert(contact);
+        } else {
+            // cria um contato com o mesmo ID e atualiza o seus valores
+            Contact contact = new Contact(contactID, name, phone, email);
+            // solicita a ViewModel a atualização do contato
+            addEditViewModel.update(contact);
+        }
+        //Solicita a naveção voltar uma tela
         Navigation.findNavController(getView()).popBackStack();
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        // cria uma ViewModel para o fragmento
         addEditViewModel = new ViewModelProvider(this).get(AddEditViewModel.class);
-        // TODO: Use the ViewModel
+        // se estiver editando um contato existente atualiza a tela com os valores
+        if (addingNewContact == false) {
+            // usa a ViewModel para solicitar a busca pelo novo contato
+            addEditViewModel.getContactById(contactID).observe(getViewLifecycleOwner(), new Observer<Contact>() {
+                @Override
+                public void onChanged(@Nullable final Contact contact) {
+                    // atualiza as informações da tela com os dados do contato lido
+                    nameTextInputLayout.getEditText().setText(contact.getName());
+                    phoneTextInputLayout.getEditText().setText(contact.getPhone());
+                    emailTextInputLayout.getEditText().setText(contact.getEmail());
+                }
+            });
+        }
     }
 }

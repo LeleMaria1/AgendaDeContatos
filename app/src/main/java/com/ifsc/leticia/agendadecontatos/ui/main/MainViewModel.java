@@ -10,7 +10,6 @@ import androidx.lifecycle.LiveData;
 import java.util.List;
 
 import com.ifsc.leticia.agendadecontatos.data.Contact;
-import com.ifsc.leticia.agendadecontatos.ContactsRepository;
 import com.ifsc.leticia.agendadecontatos.data.ContactsRepository;
 
 public class MainViewModel extends AndroidViewModel {
