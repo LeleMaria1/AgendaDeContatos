@@ -1,5 +1,6 @@
 package com.ifsc.leticia.agendadecontatos.ui.main;
 
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
@@ -15,8 +16,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.ifsc.leticia.agendadecontatos.R;
+import com.ifsc.leticia.agendadecontatos.data.Contact;
 
 import static com.ifsc.leticia.agendadecontatos.MainActivity.CONTACT_ID;
 
@@ -26,14 +29,26 @@ public class DetailFragment extends Fragment {
     // TODO componentes TextView
     private DetailViewModel detailViewModel; // ViewModel do fragmento
 
+    // componentes TextView para informações de contato
+    private TextView nameTextView;
+    private TextView phoneTextView;
+    private TextView emailTextView;
+
+    public DetailFragment() {
+    }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
         // cria o fragmento com o layout do arquivo details_fragment.xml
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
         // configura o fragmento para exibir itens de menu
         setHasOptionsMenu(true);
-        // TODO componentes textview
+        // obtem as referências dos componentes
+        nameTextView = (TextView) view.findViewById(R.id.nameTextView);
+        phoneTextView = (TextView) view.findViewById(R.id.phoneTextView);
+        emailTextView = (TextView) view.findViewById(R.id.emailTextView);
         // acessa a lista de argumentos enviada ao fragmento em busca do ID do contato
         Bundle arguments = getArguments();
         if (arguments != null)
@@ -73,8 +88,8 @@ public class DetailFragment extends Fragment {
 
     // exclui um contato
     private void deleteContact() {
-        // TODO deletar contato
-        // solicita o retorno a tela anterior
+        // usa a ViewModel para apagar o contato aberto
+        detailViewModel.delete();
         Navigation.findNavController(getView()).popBackStack();
     }
 
@@ -82,6 +97,14 @@ public class DetailFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         detailViewModel = new ViewModelProvider(this).get(DetailViewModel.class);
-        // TODO: Use the ViewModel
+        detailViewModel.getContactById(contactID).observe(getViewLifecycleOwner(), new Observer<Contact>() {
+            @Override
+            public void onChanged(@Nullable final Contact contact) {
+                // atualiza as informações da tela com os dados do contato lido
+                nameTextView.setText(contact.getName());
+                phoneTextView.setText(contact.getPhone());
+                emailTextView.setText(contact.getEmail());
+            }
+        });
     }
 }
