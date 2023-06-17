@@ -1,5 +1,6 @@
 package com.ifsc.leticia.agendadecontatos.ui.main;
 
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import static com.ifsc.leticia.agendadecontatos.MainActivity.CONTACT_ID;
 import static com.ifsc.leticia.agendadecontatos.MainActivity.NEW_CONTACT;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainFragment extends Fragment {
 
@@ -76,13 +78,14 @@ public class MainFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
-        // TODO: Use the ViewModel
-
-        ArrayList<Contact> list = new ArrayList<Contact>();
-        list.add(new Contact(1,"Fulano", "1234", "a@a.com"));
-        list.add(new Contact(2,"Beltrano", "4567", "b@a.com"));
-        list.add(new Contact(3,"Ciclano", "8888", "c@a.com"));
-        contactsAdapter.setContacts(list);
+        // configura a observação da lista de contatos para atualizar a lista
+        // quando detectada uma mudança
+        mainViewModel.getAllContacts().observe(getViewLifecycleOwner(), new Observer<List<Contact>>() {
+            @Override
+            public void onChanged(@Nullable final List<Contact> contacts) {
+                // Atualiza a lista de contatos do adaptador
+                contactsAdapter.setContacts(contacts);
+            }
+        });
     }
-
 }
