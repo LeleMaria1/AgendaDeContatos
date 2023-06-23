@@ -25,38 +25,39 @@ import static com.ifsc.leticia.agendadecontatos.MainActivity.CONTACT_ID;
 import static com.ifsc.leticia.agendadecontatos.MainActivity.NEW_CONTACT;
 
 public class AddEditFragment extends Fragment {
-    private int contactID; // ID do contato selecionado
-    private boolean addingNewContact; // flag para sinalizar adição ou edição
-
-    // componente FAB para salvar o contato
-    private FloatingActionButton saveContactFAB;
-
-    // ViewModel do fragmento
-    private AddEditViewModel addEditViewModel;
-
-    // componentes EditText para informações de contato
+    private int ContactID;
+    private boolean addingNewContact;
     private TextInputLayout nameTextInputLayout;
     private TextInputLayout phoneTextInputLayout;
     private TextInputLayout emailTextInputLayout;
 
+    private FloatingActionButton saveContactFab;
+
+    private AddEditViewModel  addEditViewModel;
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         // cria o fragmento com o layout do arquivo add_edit_fragment.xml
         View view = inflater.inflate(R.layout.fragment_add_edit, container, false);
-        // obtem as referências dos componentes
+
+        // TODO componentes TextInputLayout
         nameTextInputLayout = view.findViewById(R.id.nameTextInputLayout);
         phoneTextInputLayout = view.findViewById(R.id.phoneTextInputLayout);
         emailTextInputLayout = view.findViewById(R.id.emailTextInputLayout);
+
         // configura o receptor de eventos do FAB
-        saveContactFAB = view.findViewById(R.id.saveButton);
-        saveContactFAB.setOnClickListener(saveContactButtonClicked);
-        // acessa a lista de argumentos enviada ao fragmento em busca do ID do contato
+        saveContactFab = view.findViewById(R.id.saveButton);
+        saveContactFab.setOnClickListener((view1 -> {
+            ((InputMethodManager)
+                    getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(getView().getWindowToken(), 0);
+            saveContact();
+        }));
+        // LOGICA DA ESCOLHA DA OPERAÇÃO
         Bundle arguments = getArguments();
-        contactID = arguments.getInt(CONTACT_ID);
+        ContactID = arguments.getInt(CONTACT_ID);
         // verifica se o fragmento deve criar um novo contato ou editar um já existente
-        if (contactID == NEW_CONTACT) {
+        if (ContactID == NEW_CONTACT) {
             // usa a flag para sinalizar que é um novo contato
             addingNewContact = true;
         } else {
@@ -76,7 +77,6 @@ public class AddEditFragment extends Fragment {
             saveContact();
         }
     };
-
     // salva informações de um contato no banco de dados
     private void saveContact() {
         // faz a leitura dos dados inseridos
@@ -91,31 +91,28 @@ public class AddEditFragment extends Fragment {
             addEditViewModel.insert(contact);
         } else {
             // cria um contato com o mesmo ID e atualiza o seus valores
-            Contact contact = new Contact(contactID, name, phone, email);
+            Contact contact = new Contact(ContactID, name, phone, email);
             // solicita a ViewModel a atualização do contato
             addEditViewModel.update(contact);
         }
         //Solicita a naveção voltar uma tela
         Navigation.findNavController(getView()).popBackStack();
     }
-
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        // cria uma ViewModel para o fragmento
         addEditViewModel = new ViewModelProvider(this).get(AddEditViewModel.class);
-        // se estiver editando um contato existente atualiza a tela com os valores
-        if (addingNewContact == false) {
-            // usa a ViewModel para solicitar a busca pelo novo contato
-            addEditViewModel.getContactById(contactID).observe(getViewLifecycleOwner(), new Observer<Contact>() {
+        if(addingNewContact == false){
+            addEditViewModel.getContactById(ContactID).observe(getViewLifecycleOwner(), new Observer<Contact>() {
                 @Override
-                public void onChanged(@Nullable final Contact contact) {
-                    // atualiza as informações da tela com os dados do contato lido
+                public void onChanged(Contact contact) {
                     nameTextInputLayout.getEditText().setText(contact.getName());
                     phoneTextInputLayout.getEditText().setText(contact.getPhone());
                     emailTextInputLayout.getEditText().setText(contact.getEmail());
+
                 }
             });
         }
     }
+
 }

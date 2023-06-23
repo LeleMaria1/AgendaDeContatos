@@ -4,11 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.main.MainFragment">
+    tools:context=".MainActivity" >
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
+        android:id="@+id/recyclerView"
         android:layout_height="match_parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -17,7 +17,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="top|end"
         android:clickable="true"
-        android:src="@drawable/ic_baseline_add_circle_24" />
-
-
+        app:srcCompat="@drawable/ic_baseline_add_circle_24"
+        android:importantForAccessibility="no" />
 </FrameLayout>
