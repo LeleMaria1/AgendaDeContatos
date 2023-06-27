@@ -49,9 +49,15 @@ public abstract class ContactsDatabase extends RoomDatabase {
         @Override
         protected Void doInBackground(final Void... params) {
             mDao.deleteAll();
-            Contact word = new Contact("Hello", "", "");
+            Contact word = new Contact("Joelma", "9998888", "joelma@gmail.com");
             mDao.insert(word);
-            word = new Contact("World", "", "");
+            word = new Contact("Ailton", "88887777", "ailton@gmail.com");
+            mDao.insert(word);
+            word = new Contact("Gabriella", "9999666", "gabriella@gmail.com");
+            mDao.insert(word);
+            word = new Contact("Leticia", "9977755", "leticia@gmail.com");
+            mDao.insert(word);
+            word = new Contact("Ari", "99444665", "ariguilherme@gmail.com");
             mDao.insert(word);
             return null;
         }
